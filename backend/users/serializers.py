@@ -16,4 +16,11 @@ class UserSerializer(serializers.ModelSerializer):
     
     def create (self, validate_data):
         return super().create(validate_data)
-        
+
+class UserLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+
+
+
+
