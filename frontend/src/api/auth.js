@@ -26,7 +26,6 @@ export const registerUser = async ({ email, password }) => {
   return response.data;
 };
 
-
 export const logoutUser = async (refreshToken) => {
   await axios.post(`${API_URL}/users/logout/`, {
     refresh: refreshToken

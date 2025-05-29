@@ -19,7 +19,7 @@ const LoginForm = () => {
       localStorage.setItem('refreshToken', refresh);
       localStorage.setItem('email', res_email);
 
-      navigate('/home');
+      navigate('/dashboard');
     } catch (err) {
       setError('Email hoặc mật khẩu không đúng.');
     }
