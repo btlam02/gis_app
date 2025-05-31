@@ -65,7 +65,7 @@ export default function BridgeMap() {
   }
 
   return (
-    <MapContainer center={center} zoom={14} style={{ height: "100vh", width: "100%" }}>
+    <MapContainer center={center} zoom={14} className="w-full h-full">
       <TileLayer
         attribution='&copy; <a href="https://osm.org">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -104,7 +104,7 @@ export default function BridgeMap() {
                   key={segment.id}
                   positions={positions}
                   pathOptions={{ color: statusColor(bridge.status), weight: 5 }}
-                />
+                />       
               );
             })}
           </React.Fragment>
