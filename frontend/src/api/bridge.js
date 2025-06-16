@@ -1,6 +1,5 @@
 import axios from "axios";
 
-
 const API_URL = process.env.REACT_APP_API_URL
 
 export async function fetchBridges() {
@@ -11,3 +10,8 @@ export async function fetchBridges() {
     throw new Error(error.response?.data?.detail || error.message || "Lỗi khi tải dữ liệu cầu");
   }
 }
+
+
+
+
+

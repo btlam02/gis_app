@@ -28,6 +28,16 @@ function statusColor(status) {
   }
 }
 
+
+function statusLabel(status){
+  switch(status) {
+    case "good": return "Đang hoạt động";
+    case "warning": return "Đang sửa chữa";
+    case "bad": return "Ngừng khai thác";
+    default: return "Chưa rõ ";
+  }
+}
+
 export default function BridgeMap() {
   const [bridges, setBridges] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -91,9 +101,9 @@ export default function BridgeMap() {
               <Popup>
                 <strong>{bridge.name}</strong><br />
                 {bridge.description}<br />
-                Status: {bridge.status}<br />
-                Built year: {bridge.built_year}<br />
-                <em>(Click chấm để {visibleSegments[bridge.id] ? "ẩn" : "hiện"} đường cầu)</em>
+                Trạng thái: {statusLabel(bridge.status)}<br />
+                Năm xây dựng: {bridge.built_year}<br />
+                <em>(Click để {visibleSegments[bridge.id] ? "ẩn" : "hiện"} đường cầu)</em>
               </Popup>
             </CircleMarker>
 

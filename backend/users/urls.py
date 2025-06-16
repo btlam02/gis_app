@@ -10,7 +10,6 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view()),
     path('users/', UserListView.as_view()),  # GET all users (admin only)
     path('users/<int:pk>/', UserDetailView.as_view()),  # GET/PUT/DELETE user
-    
 ]
 
 

@@ -13,8 +13,6 @@ const LoginForm = () => {
     e.preventDefault();
     try {
       const {access, refresh, res_email} = await loginUser(email, password);
-      console.log(access); 
-      console.log(refresh); 
       localStorage.setItem('accessToken', access);
       localStorage.setItem('refreshToken', refresh);
       localStorage.setItem('email', res_email);

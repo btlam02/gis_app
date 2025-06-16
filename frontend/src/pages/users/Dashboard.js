@@ -25,10 +25,10 @@ const DashboardPage = () => {
     navigate('/login');
   };
   
-
+ 
   return (
     <div className="flex flex-col items-center justify-center h-screen space-y-4">
-      <h1 className="text-2xl font-bold">Chào mừng {userEmail}!</h1>
+      <h1 className="text-2xl text-center font-bold">Chào mừng {userEmail}!</h1>
       <button
         onClick={handleLogout}
         className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
