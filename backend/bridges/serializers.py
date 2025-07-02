@@ -20,6 +20,6 @@ class BridgeSerializer(serializers.ModelSerializer):
         if obj.center_point:
             return {
                 "type": "Point",
-                "coordinates": [obj.center_point.x, obj.center_point.y]  # x=lng, y=lat
+                "coordinates": [obj.center_point.x, obj.center_point.y]  
             }
         return None

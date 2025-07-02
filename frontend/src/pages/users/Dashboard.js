@@ -22,6 +22,7 @@ const DashboardPage = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('email');
+    localStorage.removeItem('role');
     navigate('/login');
   };
   

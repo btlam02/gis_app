@@ -10,11 +10,12 @@ export const loginUser = async (email, password) => {
   });
   const { 
           email: res_email ,
+          role: role,
           access_token: access, 
           refresh_token: refresh,
           access_expires,
           refresh_expires} = res.data;
-  return { access, refresh, res_email};
+  return { access, role, refresh, res_email};
 };
 
 // api/auth.js

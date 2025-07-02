@@ -12,8 +12,9 @@ const LoginForm = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const {access, refresh, res_email} = await loginUser(email, password);
+      const {access, role, refresh, res_email} = await loginUser(email, password);
       localStorage.setItem('accessToken', access);
+      localStorage.setItem('role',role)
       localStorage.setItem('refreshToken', refresh);
       localStorage.setItem('email', res_email);
 

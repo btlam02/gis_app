@@ -7,11 +7,12 @@ class Bridge(models.Model):
         ('closed', 'Đóng cửa'),
         ('unknown', 'Chưa biết'),
     ]
-
+    # new data pictures 
+    # picture = models.FileField(upload_to='media/')
     name = models.CharField(max_length=255)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='unknown')
     description = models.TextField(blank=True, null=True)
-    center_point = models.PointField(null=True, blank=True)  # điểm trung tâm cầu (optional)
+    center_point = models.PointField(null=True, blank=True)  
     built_year = models.IntegerField(null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
 
