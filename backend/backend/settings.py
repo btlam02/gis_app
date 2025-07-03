@@ -6,10 +6,6 @@ from datetime import timedelta
 from django.conf import settings
 
 
-GDAL_LIBRARY_PATH = '/opt/homebrew/Cellar/gdal/3.11.0/lib/libgdal.dylib'
-GEOS_LIBRARY_PATH = '/opt/homebrew/opt/geos/lib/libgeos_c.dylib'
-
-
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,6 +16,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
+GDAL_LIBRARY_PATH = os.getenv('GDAL')
+GEOS_LIBRARY_PATH = os.getenv('GEOS')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -34,7 +32,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    # hoặc "http://127.0.0.1:3000"
+  
 ]
 # Application definition
 

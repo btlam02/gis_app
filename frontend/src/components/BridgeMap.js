@@ -59,7 +59,24 @@ export default function BridgeMap() {
 
   if (loading) return <p>Đang tải dữ liệu cầu...</p>;
   if (error) return <p>Lỗi: {error}</p>;
-  if (bridges.length === 0) return <p>Không có dữ liệu cầu.</p>;
+  if (bridges.length === 0) return (
+    <MapContainer center={[10.75, 106.68]} zoom={14} className="w-full h-full">
+      <TileLayer
+        attribution='&copy; <a href="https://osm.org">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <CircleMarker
+        center={[10.75, 106.68]}
+        radius={10}
+        pathOptions={{ color: "gray", fillColor: "gray", fillOpacity: 0.7 }}
+      >
+        <Popup>
+          <strong>Hiện chưa có dữ liệu cầu</strong><br />
+          Dữ liệu cầu sẽ sớm được cập nhật.
+        </Popup>
+      </CircleMarker>
+    </MapContainer>
+  );;
 
   const defaultCenter = [10.75, 106.68];
   const center = bridges[0]?.center_point
