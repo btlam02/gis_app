@@ -25,6 +25,7 @@ export default function Navbar() {
         {/* Desktop Menu */}
         <div className="hidden md:flex space-x-6">
           {navItems.map((item) => (
+            <> 
             <Link
               key={item.name}
               to={item.path}
@@ -32,8 +33,11 @@ export default function Navbar() {
             >
               {item.name}
             </Link>
+            </>
           ))}
         </div>
+
+        
 
         {/* Mobile Icon */}
         <div className="md:hidden">
@@ -41,6 +45,7 @@ export default function Navbar() {
             {menuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
+
       </div>
 
       {/* Mobile Menu */}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Polyline, CircleMarker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { fetchBridges } from "../api/bridge";
+import Loading from "./Loading";
 
 function parseWktLineString(wkt) {
   const regex = /LINESTRING\s*\(([^)]+)\)/i;
@@ -57,7 +58,7 @@ export default function BridgeMap() {
       });
   }, []);
 
-  if (loading) return <p>Đang tải dữ liệu cầu...</p>;
+  if (loading) return <> <Loading/> </> ;
   if (error) return <p>Lỗi: {error}</p>;
   if (bridges.length === 0) return (
     <MapContainer center={[10.75, 106.68]} zoom={14} className="w-full h-full">

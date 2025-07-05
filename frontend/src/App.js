@@ -4,6 +4,7 @@ import LoginPage from './pages/users/LoginPage';
 import DashboardPage from './pages/users/Dashboard';
 import HomePage from './pages/home/HomePage';
 import Navbar from 'components/Navbar';
+import BridgeListPage from 'pages/home/BridgeList';
 
 function App() { 
   return (
@@ -13,6 +14,7 @@ function App() {
       <Routes>
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/list_bridges" element={<BridgeListPage/>}/>
         <Route path="/dashboard" element={<DashboardPage />}/>
         <Route path="/" element={<HomePage />}/>
       </Routes>

@@ -8,6 +8,12 @@ from django.conf import settings
 
 load_dotenv()
 
+
+
+
+
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,20 +26,23 @@ GDAL_LIBRARY_PATH = os.getenv('GDAL')
 GEOS_LIBRARY_PATH = os.getenv('GEOS')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "True").lower() == "true"
+print("DEBUG =", DEBUG)
 
 AUTH_USER_MODEL = 'users.User'
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+
 
 # CORS settings
 CORS_ALLOW_ALL_ORIGINS = True 
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-  
 ]
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -170,3 +179,11 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+import cloudinary
+
+cloudinary.config( 
+    cloud_name=os.getenv("CLOUD_NAME"),
+    api_key=os.getenv("API_KEY"),
+    api_secret=os.getenv("API_SECRET"),
+)
