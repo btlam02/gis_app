@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import RegisterPage from './pages/users/RegisterPage';
 import LoginPage from './pages/users/LoginPage';
-import DashboardPage from './pages/users/Dashboard';
+import DashboardPage from './pages/users/AdminDashboard';
 import HomePage from './pages/home/HomePage';
 import Navbar from 'components/Navbar';
 import BridgeListPage from 'pages/home/BridgeList';
