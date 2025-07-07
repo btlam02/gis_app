@@ -330,7 +330,7 @@ export default function BridgeMap() {
 
   return (
     <div className="relative w-full h-full">
-      <div className="absolute bottom-4 left-4 z-[1000] bg-white/90 backdrop-blur-sm px-3 py-2 rounded-xl shadow-md flex gap-2">
+      <div className="absolute bottom-2 xl:bottom-4 left-4 z-[1000] bg-white/90 backdrop-blur-sm px-3 py-2 rounded-xl shadow-md flex gap-2">
         {["Bản đồ", "Vệ tinh", "Tối"].map((label, i) => {
           const value = ["default", "satellite", "dark"][i];
           return (
@@ -349,7 +349,7 @@ export default function BridgeMap() {
         })}
       </div>
 
-      <div className="absolute bottom-4 right-4 z-[1000] flex items-center gap-2">
+      <div className="absolute bottom-20 right-6 xl:bottom-4 xl:right-4 z-[1000] flex items-center gap-2">
         <button
           onClick={() => {
             if (navigator.geolocation) {
