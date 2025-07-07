@@ -76,7 +76,7 @@ function BridgeList() {
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6">Danh sách các cây cầu</h2>
+      <h2 className="text-2xl font-bold mb-6">Danh sách cầu trong hệ thống</h2>
 
       {/* 🔍 Ô tìm kiếm */}
       <div className="mb-4">

@@ -12,16 +12,28 @@ import {
 import "leaflet/dist/leaflet.css";
 import { fetchBridges } from "../api/bridge";
 import Loading from "./Loading";
-import { Search, Route, Compass } from "lucide-react";
+import { Search, Route, Compass, MapPinned} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import L from "leaflet";
 import "leaflet-routing-machine";
-import axios from "axios"
+import axios from "axios";
+import { useMapEvents } from "react-leaflet";
 
+function MapClickHandler({ onMapClick, routingEnabled }) {
+  useMapEvents({
+    click(e) {
+      if (!routingEnabled) return;
+      onMapClick(e.latlng);
+    },
+  });
 
+  return null;
+}
 
 async function geocodeLocation(query) {
-  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`;
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+    query
+  )}&format=json&limit=1`;
   try {
     const response = await axios.get(url, {
       headers: { "Accept-Language": "vi" },
@@ -259,40 +271,59 @@ export default function BridgeMap() {
   };
 
   const handleSearch = async () => {
-    // 1. Tìm cầu theo tên
-    const bridge = bridges.find((b) =>
-      b.name.toLowerCase().includes(searchQuery.toLowerCase())
+    const searchLower = searchQuery.trim().toLowerCase();
+
+    // 0. Kiểm tra từ khóa quá chung chung hoặc quá ngắn
+    const genericKeywords = ["cầu", "bridge", "cây cầu"];
+    if (genericKeywords.includes(searchLower) || searchLower.length <= 2) {
+      toast.info(
+        "Vui lòng nhập chi tiết tên cầu hơn (ví dụ: “Cầu Sài Gòn”) hoặc địa điểm cụ thể."
+      );
+      return;
+    }
+
+    // 1. Ưu tiên tìm khớp chính xác tên cầu
+    let bridge = bridges.find(
+      (b) => b.name.trim().toLowerCase() === searchLower
     );
-  
+
+    // 2. Nếu không thấy, tìm bao gồm từ khóa
+    if (!bridge) {
+      bridge = bridges.find((b) => b.name.toLowerCase().includes(searchLower));
+    }
+
     if (bridge && bridge.center_point) {
       const coords = [
         bridge.center_point.coordinates[1],
         bridge.center_point.coordinates[0],
       ];
-  
+
       setHighlightedBridge({ id: bridge.id, coords });
+
       if (routingEnabled && userLocation) {
         setRouteStart(userLocation);
         setRouteEnd(coords);
       }
       return;
     }
-  
-    // 2. Nếu không phải tên cầu, thử tìm địa điểm
+
+    // 3. Nếu không phải cầu, thử tìm địa điểm bằng geocode
     const geoCoords = await geocodeLocation(searchQuery);
     if (geoCoords) {
+      setHighlightedBridge({ id: "search", coords: geoCoords });
+
       if (routingEnabled && userLocation) {
         setRouteStart(userLocation);
         setRouteEnd(geoCoords);
       }
-  
-      setHighlightedBridge({ id: "search", coords: geoCoords });
       return;
     }
-  
-    toast.warning("Không tìm thấy địa điểm.");
+
+    // 4. Không tìm thấy gì
+    toast.warning(
+      "Không tìm thấy địa điểm hoặc tên cầu trong hệ thống. Có thể cầu chưa được cập nhật."
+    );
   };
-  
 
   if (loading) return <Loading />;
   if (error) return <p>Lỗi: {error}</p>;
@@ -318,6 +349,31 @@ export default function BridgeMap() {
         })}
       </div>
 
+      <div className="absolute bottom-4 right-4 z-[1000] flex items-center gap-2">
+        <button
+          onClick={() => {
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                  const coords = [pos.coords.latitude, pos.coords.longitude];
+                  setUserLocation(coords);
+                  setHighlightedBridge({ id: "me", coords });
+                },
+                (err) => {
+                  toast.error("Không thể lấy vị trí hiện tại.");
+                  console.error(err);
+                }
+              );
+            } else {
+              toast.warn("Trình duyệt không hỗ trợ định vị.");
+            }
+          }}
+          className="bg-white rounded-full p-2 shadow hover:bg-gray-100 transition"
+        >
+          <MapPinned size={16} />
+        </button>
+      </div>
+
       <div className="absolute top-4 right-4 z-[1000] flex items-center gap-2">
         <button
           onClick={() => setSearchOpen(!searchOpen)}
@@ -335,7 +391,9 @@ export default function BridgeMap() {
             }
           }}
           className={`rounded-full p-2 shadow hover:bg-blue-500 hover:text-white transition ${
-            routingEnabled ? "bg-blue-500 text-white hover:bg-gray-200 hover:text-black "  : "bg-white"
+            routingEnabled
+              ? "bg-blue-500 text-white hover:bg-gray-200 hover:text-black "
+              : "bg-white"
           }`}
         >
           <Route size={16} />
@@ -398,11 +456,31 @@ export default function BridgeMap() {
           url={tileUrls[tileType]}
         />
 
+        <MapClickHandler
+          routingEnabled={routingEnabled}
+          onMapClick={(latlng) => {
+            const latLngArray = [latlng.lat, latlng.lng];
+            if (!routeStart) {
+              setRouteStart(latLngArray);
+              toast.info("Đã chọn điểm bắt đầu");
+            } else if (!routeEnd) {
+              setRouteEnd(latLngArray);
+              toast.info("Đã chọn điểm đến");
+            } else {
+              // Nếu cả hai đã có, reset và đặt lại điểm bắt đầu
+              setRouteStart(latLngArray);
+              setRouteEnd(null);
+              toast.info("Đã đặt lại điểm bắt đầu. Vui lòng chọn điểm đến.");
+            }
+          }}
+        />
+
         {highlightedBridge && (
           <>
             <FlyToLocation position={highlightedBridge.coords} zoom={17} />
             <CircleMarker
               center={highlightedBridge.coords}
+              interactive={false}
               radius={14}
               pathOptions={{
                 color: "gold",
