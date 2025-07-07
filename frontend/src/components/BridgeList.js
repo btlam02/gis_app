@@ -16,34 +16,48 @@ const BridgeModal = ({ bridge, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
-      <motion.div
-        className="bg-white rounded-xl p-6 max-w-xl w-full shadow-lg relative"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-      >
-        <button
-          onClick={onClose}
-          className="absolute top-2 right-2 text-gray-600 hover:text-red-500 text-lg"
-        >
-          ×
-        </button>
-        <h2 className="text-2xl font-bold mb-2">{bridge.name}</h2>
-        <p className="text-gray-600 mb-2"><strong>Quận:</strong> {bridge.district || "Không rõ"}</p>
-        <p className="text-gray-600 mb-2"><strong>Chiều dài:</strong> {bridge.length ? `${bridge.length} m` : "Không rõ"}</p>
-        <p className="text-gray-600 mb-2"><strong>Chất liệu:</strong> {bridge.material || "Không rõ"}</p>
-        <p className="text-gray-600 mb-2"><strong>Trạng thái:</strong> {getStatusLabel(bridge.status)}</p>
-        <p className="text-gray-700 mt-4">{bridge.description || "Không có mô tả."}</p>
-        {bridge.image_url && (
-          <img
-            src={bridge.image_url}
-            alt={bridge.name}
-            className="mt-4 rounded-lg w-full max-h-[300px] object-cover"
-          />
-        )}
-      </motion.div>
+<div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
+  <motion.div
+    className="bg-white rounded-xl p-6 max-w-xl w-full shadow-lg relative"
+    initial={{ opacity: 0, y: -20 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -20 }}
+  >
+    <button
+      onClick={onClose}
+      className="absolute top-2 right-2 text-gray-600 hover:text-red-500 text-lg"
+    >
+      ×
+    </button>
+
+    <h2 className="text-2xl font-bold mb-4">{bridge.name}</h2>
+
+    {/* Grid 2 cột cho thông tin */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-gray-700">
+      <p><strong>Quận:</strong> {bridge.district || "Không rõ"}</p>
+      <p><strong>Chất liệu:</strong> {bridge.material || "Không rõ"}</p>
+      <p><strong>Chiều dài:</strong> {bridge.length ? `${bridge.length} m` : "Không rõ"}</p>
+      <p><strong>Chiều rộng:</strong> {bridge.width ? `${bridge.width} m` : "Không rõ"}</p>
+      <p><strong>Trạng thái:</strong> {getStatusLabel(bridge.status)}</p>
+      <p><strong>Năm xây dựng:</strong> {bridge.built_year}</p>
     </div>
+
+    {/* Mô tả riêng phía dưới */}
+    <p className="text-gray-700 mt-4 col-span-2">
+      {bridge.description || "Không có mô tả."}
+    </p>
+
+    {/* Ảnh nếu có */}
+    {bridge.image_url && (
+      <img
+        src={bridge.image_url}
+        alt={bridge.name}
+        className="mt-4 rounded-lg w-full max-h-[300px] object-cover"
+      />
+    )}
+  </motion.div>
+</div>
+
   );
 };
 

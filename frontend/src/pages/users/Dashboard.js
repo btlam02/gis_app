@@ -2,25 +2,35 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { logoutUser } from 'api/auth';
 import BridgeManagementPage from '../../components/Dashboard/BridgeManagement';
-
 import { Menu, X, Building2, Users, UserRound, LogOut } from 'lucide-react';
 
 const DashboardPage = () => {
   const [userEmail, setUserEmail] = useState('');
+  const [userRole, setUserRole] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('bridges');
+  const [activeTab, setActiveTab] = useState('information'); // default safe tab
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     const email = localStorage.getItem('email');
+    const role = localStorage.getItem('role');
 
     if (!token) {
       navigate('/login');
     } else {
       setUserEmail(email);
+      setUserRole(role);
+
+      // Ngăn user không phải admin truy cập vào tab không phù hợp
+      if (
+        role !== 'admin' &&
+        (activeTab === 'users' || activeTab === 'bridges')
+      ) {
+        setActiveTab('information');
+      }
     }
-  }, [navigate]);
+  }, [navigate, activeTab]);
 
   const handleLogout = async () => {
     const refreshToken = localStorage.getItem('refreshToken');
@@ -32,8 +42,24 @@ const DashboardPage = () => {
   const renderContent = () => {
     switch (activeTab) {
       case 'bridges':
-        return <BridgeManagementPage/>;
+        if (userRole !== 'admin') {
+          return (
+            <div className="p-4">
+              <h2 className="text-xl font-bold text-red-600">⛔ Không có quyền truy cập</h2>
+              <p>Bạn cần có quyền quản trị viên để xem nội dung này.</p>
+            </div>
+          );
+        }
+        return <BridgeManagementPage />;
       case 'users':
+        if (userRole !== 'admin') {
+          return (
+            <div className="p-4">
+              <h2 className="text-xl font-bold text-red-600">⛔ Không có quyền truy cập</h2>
+              <p>Bạn cần có quyền quản trị viên để xem nội dung này.</p>
+            </div>
+          );
+        }
         return (
           <div className="p-4">
             <h2 className="text-xl font-bold mb-2">Quản lý người dùng</h2>
@@ -41,14 +67,13 @@ const DashboardPage = () => {
           </div>
         );
       case 'information':
-          return (
-            <div className="p-4">
-              <h2 className="text-xl font-bold mb-2">Thông tin cá nhân</h2>
-              <p>Đang cập nhật.</p>
-            </div>
-          );
       default:
-        return null;
+        return (
+          <div className="p-4">
+            <h2 className="text-xl font-bold mb-2">Thông tin cá nhân</h2>
+            <p>Đang cập nhật.</p>
+          </div>
+        );
     }
   };
 
@@ -69,28 +94,32 @@ const DashboardPage = () => {
             <X />
           </button>
         </div>
-        <p className="text-gray-700 text-center text-sm">📧{userEmail}</p>
+        <p className="text-gray-700 text-center text-sm">📧 {userEmail}</p>
 
         {/* Menu Items */}
-        <button
-          onClick={() => setActiveTab('bridges')}
-          className={`flex items-center gap-2 px-4 py-2 rounded hover:bg-gray-100 ${
-            activeTab === 'bridges' ? 'bg-gray-200 font-semibold' : ''
-          }`}
-        >
-          <Building2 size={18} />
-          Quản lý cầu
-        </button>
+        {userRole === 'admin' && (
+          <button
+            onClick={() => setActiveTab('bridges')}
+            className={`flex items-center gap-2 px-4 py-2 rounded hover:bg-gray-100 ${
+              activeTab === 'bridges' ? 'bg-gray-200 font-semibold' : ''
+            }`}
+          >
+            <Building2 size={18} />
+            Quản lý cầu
+          </button>
+        )}
 
-        <button
-          onClick={() => setActiveTab('users')}
-          className={`flex items-center gap-2 px-4 py-2 rounded hover:bg-gray-100 ${
-            activeTab === 'users' ? 'bg-gray-200 font-semibold' : ''
-          }`}
-        >
-          <Users size={18} />
-          Quản lý người dùng
-        </button>
+        {userRole === 'admin' && (
+          <button
+            onClick={() => setActiveTab('users')}
+            className={`flex items-center gap-2 px-4 py-2 rounded hover:bg-gray-100 ${
+              activeTab === 'users' ? 'bg-gray-200 font-semibold' : ''
+            }`}
+          >
+            <Users size={18} />
+            Quản lý người dùng
+          </button>
+        )}
 
         <button
           onClick={() => setActiveTab('information')}

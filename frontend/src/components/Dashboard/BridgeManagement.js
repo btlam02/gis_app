@@ -1,24 +1,32 @@
 // src/components/Dashboard/BridgeManagementPage.jsx
-import React, { useEffect, useState } from 'react';
-import { Pencil, Trash2, Plus, X } from 'lucide-react';
-import { fetchBridges, createBridge, updateBridge, deleteBridgeById } from '../../api/bridge';
+import React, { useEffect, useState } from "react";
+import { Pencil, Trash2, Plus, X } from "lucide-react";
+import {
+  fetchBridges,
+  createBridge,
+  updateBridge,
+  deleteBridgeById,
+} from "../../api/bridge";
+
+import { toast } from "react-toastify";
 
 const BridgeForm = ({ bridge, onCancel, onSuccess }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    location: '',
-    length: '',
-    width: '',
-    material: '',
-    district: '',
-    built_year: '',
-    center_point: '',
-    description: '',
-    status: 'unknown',
-    bridge_type: 'other',
+    name: "",
+    location: "",
+    length: "",
+    width: "",
+    material: "",
+    district: "",
+    built_year: "",
+    center_point: "",
+    description: "",
+    status: "unknown",
+    bridge_type: "other",
     image: null,
   });
   const [segments, setSegments] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (bridge) {
@@ -27,14 +35,28 @@ const BridgeForm = ({ bridge, onCancel, onSuccess }) => {
         image: null,
       });
       try {
-        setSegments(Array.isArray(bridge.segments) ? bridge.segments : JSON.parse(bridge.segments));
+        setSegments(
+          Array.isArray(bridge.segments)
+            ? bridge.segments
+            : JSON.parse(bridge.segments)
+        );
       } catch {
         setSegments([]);
       }
     } else {
       setFormData({
-        name: '', location: '', length: '', width: '', material: '', district: '', built_year: '', center_point: '',
-        description: '', status: 'unknown', bridge_type: 'other', image: null,
+        name: "",
+        location: "",
+        length: "",
+        width: "",
+        material: "",
+        district: "",
+        built_year: "",
+        center_point: "",
+        description: "",
+        status: "unknown",
+        bridge_type: "other",
+        image: null,
       });
       setSegments([]);
     }
@@ -42,7 +64,7 @@ const BridgeForm = ({ bridge, onCancel, onSuccess }) => {
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
-    if (type === 'file') {
+    if (type === "file") {
       setFormData((prev) => ({ ...prev, [name]: files[0] }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
@@ -51,7 +73,7 @@ const BridgeForm = ({ bridge, onCancel, onSuccess }) => {
 
   const handleSegmentChange = (index, field, value) => {
     const updated = [...segments];
-    if (field === 'geometry') {
+    if (field === "geometry") {
       updated[index].geometry = value;
     } else {
       updated[index][field] = value;
@@ -69,11 +91,14 @@ const BridgeForm = ({ bridge, onCancel, onSuccess }) => {
   };
 
   const addSegment = () => {
-    setSegments([...segments, {
-      segment_name: '',
-      order: segments.length,
-      geometry: { type: 'LineString', coordinates: [] }
-    }]);
+    setSegments([
+      ...segments,
+      {
+        segment_name: "",
+        order: segments.length,
+        geometry: { type: "LineString", coordinates: [] },
+      },
+    ]);
   };
 
   const removeSegment = (index) => {
@@ -82,62 +107,76 @@ const BridgeForm = ({ bridge, onCancel, onSuccess }) => {
     setSegments(updated);
   };
 
-
-  
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     const formPayload = new FormData();
     for (const key in formData) {
-        if (
-            formData[key] !== undefined &&
-            formData[key] !== null &&
-            (typeof formData[key] === 'number' || typeof formData[key] === 'object' || formData[key].toString().trim() !== '')
-          ) {
-            formPayload.append(key, formData[key]);
-          }
-          
+      if (
+        formData[key] !== undefined &&
+        formData[key] !== null &&
+        (typeof formData[key] === "number" ||
+          typeof formData[key] === "object" ||
+          formData[key].toString().trim() !== "")
+      ) {
+        formPayload.append(key, formData[key]);
+      }
     }
-    formPayload.append('segments', JSON.stringify(segments || []));
-
+    formPayload.append("segments", JSON.stringify(segments || []));
 
     try {
       if (bridge) {
         await updateBridge(bridge.id, formPayload, true);
+        toast.success("Cập nhật cầu thành công!");
       } else {
         await createBridge(formPayload, true);
+        toast.success("Thêm cầu mới thành công!");
       }
       onSuccess();
     } catch (err) {
-      console.error('Lỗi khi lưu cầu:', err);
+      console.error("Lỗi khi lưu cầu:", err);
+      toast.error("Có lỗi xảy ra khi lưu cầu.");
+    } finally {
+      setLoading(false);
     }
   };
-
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-4xl relative max-h-[90vh] overflow-y-auto">
-        <button onClick={onCancel} className="absolute top-2 right-2 text-gray-500 hover:text-red-600">
+        <button
+          onClick={onCancel}
+          className="absolute top-2 right-2 text-gray-500 hover:text-red-600"
+        >
           <X />
         </button>
-        <h2 className="text-xl font-bold mb-4">{bridge ? 'Cập nhật cầu' : 'Thêm cầu mới'}</h2>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <h2 className="text-xl font-bold mb-4">
+          {bridge ? "Cập nhật cầu" : "Thêm cầu mới"}
+        </h2>
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 md:grid-cols-2 gap-4"
+        >
           {[
-            { name: 'name', label: 'Tên cầu', type: 'text', required: true },
-            { name: 'material', label: 'Vật liệu', type: 'text' },
-            { name: 'district', label: 'Quận', type: 'text' },
-            { name: 'built_year', label: 'Năm xây dựng', type: 'number' },
-            { name: 'length', label: 'Chiều dài (m)', type: 'number' },
-            { name: 'width', label: 'Chiều rộng (m)', type: 'number' },
-            { name: 'center_point_wkt', label: 'Tọa độ tâm (WKT)', type: 'text' },
+            { name: "name", label: "Tên cầu", type: "text", required: true },
+            { name: "material", label: "Vật liệu", type: "text" },
+            { name: "district", label: "Quận", type: "text" },
+            { name: "built_year", label: "Năm xây dựng", type: "number" },
+            { name: "length", label: "Chiều dài (m)", type: "number" },
+            { name: "width", label: "Chiều rộng (m)", type: "number" },
+            {
+              name: "center_point_wkt",
+              label: "Tọa độ tâm (WKT)",
+              type: "text",
+            },
           ].map(({ name, label, type, ...rest }) => (
             <div key={name} className="col-span-1">
               <label className="block font-medium text-gray-700">{label}</label>
               <input
                 type={type}
                 name={name}
-                value={formData[name] || ''}
+                value={formData[name] || ""}
                 onChange={handleChange}
                 className="mt-1 w-full border rounded-md p-2 shadow-sm"
                 {...rest}
@@ -157,7 +196,9 @@ const BridgeForm = ({ bridge, onCancel, onSuccess }) => {
           </div>
 
           <div className="col-span-1">
-            <label className="block font-medium text-gray-700">Trạng thái</label>
+            <label className="block font-medium text-gray-700">
+              Trạng thái
+            </label>
             <select
               name="status"
               value={formData.status}
@@ -190,47 +231,64 @@ const BridgeForm = ({ bridge, onCancel, onSuccess }) => {
           <div className="col-span-1 md:col-span-2">
             <label className="block font-medium text-gray-700">Segments</label>
             {segments.map((seg, index) => (
-              <div key={index} className="mb-4 border rounded p-2 space-y-2 bg-gray-50">
+              <div
+                key={index}
+                className="mb-4 border rounded p-2 space-y-2 bg-gray-50"
+              >
                 <input
                   className="w-full border p-1 rounded"
                   type="text"
                   placeholder="Tên đoạn (segment_name)"
                   value={seg.segment_name}
-                  onChange={(e) => handleSegmentChange(index, 'segment_name', e.target.value)}
+                  onChange={(e) =>
+                    handleSegmentChange(index, "segment_name", e.target.value)
+                  }
                 />
                 <input
                   className="w-full border p-1 rounded"
                   type="number"
                   placeholder="Thứ tự (order)"
                   value={seg.order}
-                  onChange={(e) => handleSegmentChange(index, 'order', parseInt(e.target.value, 10))}
+                  onChange={(e) =>
+                    handleSegmentChange(
+                      index,
+                      "order",
+                      parseInt(e.target.value, 10)
+                    )
+                  }
                 />
                 <textarea
-                className="w-full border p-1 rounded font-mono text-sm"
-                placeholder="GeoJSON coordinates (LineString)"
-                value={JSON.stringify(seg.geometry?.coordinates || '')}
-                onChange={(e) => handleSegmentChange(index, 'geometry', {
-                    type: 'LineString',
-                    coordinates: safeParseCoordinates(e.target.value)
-                })}
+                  className="w-full border p-1 rounded font-mono text-sm"
+                  placeholder="GeoJSON coordinates (LineString)"
+                  value={JSON.stringify(seg.geometry?.coordinates || "")}
+                  onChange={(e) =>
+                    handleSegmentChange(index, "geometry", {
+                      type: "LineString",
+                      coordinates: safeParseCoordinates(e.target.value),
+                    })
+                  }
                 />
                 <button
-                type="button"
-                className="text-blue-500 text-sm underline"
-                onClick={() => {
-                    const input = prompt("Dán tọa độ JSON tại đây (phải là mảng [[lng, lat], ...])");
+                  type="button"
+                  className="text-blue-500 text-sm underline"
+                  onClick={() => {
+                    const input = prompt(
+                      "Dán tọa độ JSON tại đây (phải là mảng [[lng, lat], ...])"
+                    );
                     const coords = safeParseCoordinates(input);
                     if (coords.length > 0) {
-                    handleSegmentChange(index, 'geometry', {
-                        type: 'LineString',
+                      handleSegmentChange(index, "geometry", {
+                        type: "LineString",
                         coordinates: coords,
-                    });
+                      });
                     } else {
-                    alert("Dữ liệu không hợp lệ. Hãy chắc chắn bạn dán một mảng JSON hợp lệ.");
+                      alert(
+                        "Dữ liệu không hợp lệ. Hãy chắc chắn bạn dán một mảng JSON hợp lệ."
+                      );
                     }
-                }}
+                  }}
                 >
-                📋 Dán tọa độ từ JSON
+                  📋 Dán tọa độ từ JSON
                 </button>
                 <button
                   type="button"
@@ -251,7 +309,9 @@ const BridgeForm = ({ bridge, onCancel, onSuccess }) => {
           </div>
 
           <div className="col-span-1 md:col-span-2">
-            <label className="block font-medium text-gray-700">Hình ảnh cầu</label>
+            <label className="block font-medium text-gray-700">
+              Hình ảnh cầu
+            </label>
             <input
               type="file"
               name="image"
@@ -264,9 +324,13 @@ const BridgeForm = ({ bridge, onCancel, onSuccess }) => {
           <div className="col-span-1 md:col-span-2 text-center">
             <button
               type="submit"
-              className="mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700"
+              className="mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2"
+              disabled={loading}
             >
-              {bridge ? 'Cập nhật cầu' : 'Thêm cầu'}
+              {loading && (
+                <span className="animate-spin rounded-full h-4 w-4 border-t-2 border-white"></span>
+              )}
+              {bridge ? "Cập nhật cầu" : "Thêm cầu"}
             </button>
           </div>
         </form>
@@ -303,12 +367,12 @@ const BridgeManagementPage = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Bạn có chắc chắn muốn xóa cầu này?')) return;
+    if (!window.confirm("Bạn có chắc chắn muốn xóa cầu này?")) return;
     try {
       await deleteBridgeById(id);
       await loadBridges();
     } catch (err) {
-      console.error('Lỗi khi xóa:', err);
+      console.error("Lỗi khi xóa:", err);
     }
   };
 
@@ -355,34 +419,38 @@ const BridgeManagementPage = () => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="4" className="p-4 text-center">Đang tải...</td>
-              </tr>
-            ) : bridges.map((b) => (
-              <tr key={b.id} className="border-t hover:bg-gray-50">
-                <td className="p-2">{b.name}</td>
-                <td className="p-2">{getStatusLabel(b.status)}</td>
-                <td className="p-2">{b.length}</td>
-                <td className="p-2 text-center space-x-2">
-                  <button
-                    onClick={() => {
-                      setEditingBridge(b);
-                      setShowForm(true);
-                    }}
-                    className="text-blue-600 hover:underline"
-                    title="Sửa cầu"
-                  >
-                    <Pencil size={16} />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(b.id)}
-                    className="text-red-600 hover:underline"
-                    title="Xóa cầu"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                <td colSpan="4" className="p-4 text-center">
+                  Đang tải...
                 </td>
               </tr>
-            ))}
+            ) : (
+              bridges.map((b) => (
+                <tr key={b.id} className="border-t hover:bg-gray-50">
+                  <td className="p-2">{b.name}</td>
+                  <td className="p-2">{getStatusLabel(b.status)}</td>
+                  <td className="p-2">{b.length}</td>
+                  <td className="p-2 text-center space-x-2">
+                    <button
+                      onClick={() => {
+                        setEditingBridge(b);
+                        setShowForm(true);
+                      }}
+                      className="text-blue-600 hover:underline"
+                      title="Sửa cầu"
+                    >
+                      <Pencil size={16} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(b.id)}
+                      className="text-red-600 hover:underline"
+                      title="Xóa cầu"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

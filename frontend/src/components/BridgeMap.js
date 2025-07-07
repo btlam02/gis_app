@@ -535,7 +535,7 @@ export default function BridgeMap() {
                 <Popup>
                   <strong>{bridge.name}</strong>
                   <br />
-                  {bridge.description}
+                  Chất liệu: {bridge.material}
                   <br />
                   Trạng thái: {statusLabel(bridge.status)}
                   <br />
