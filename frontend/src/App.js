@@ -6,9 +6,14 @@ import HomePage from './pages/home/HomePage';
 import Navbar from 'components/Navbar';
 import BridgeListPage from 'pages/home/BridgeList';
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function App() { 
   return (
     <div className='flex flex-col h-screen w-full'> 
+    <ToastContainer position="top-center" autoClose={3000} />
+
     <Router>
       <Navbar/>
       <Routes>

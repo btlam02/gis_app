@@ -10,7 +10,7 @@ export default function Navbar() {
   const navItems = [
     { name: "Trang chủ", path: "/" },
     { name: "Danh sách cầu", path: "/list_bridges" },
-    { name: "Liên hệ", path: "/contact" },
+    // { name: "Liên hệ", path: "/contact" },
     { name: "Quản lý", path: "/dashboard" },
   ];
 

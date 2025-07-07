@@ -12,6 +12,7 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-scripts": "5.0.1",
+    "react-toastify": "^11.0.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -43,6 +44,7 @@
     "autoprefixer": "^10.4.21",
     "cors": "^2.8.5",
     "leaflet": "^1.9.4",
+    "leaflet-routing-machine": "^3.2.12",
     "lucide-react": "^0.511.0",
     "postcss": "^8.5.3",
     "react-leaflet": "^5.0.0",

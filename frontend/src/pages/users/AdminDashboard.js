@@ -44,7 +44,7 @@ const DashboardPage = () => {
           return (
             <div className="p-4">
               <h2 className="text-xl font-bold mb-2">Thông tin cá nhân</h2>
-              <p>Chức năng này sẽ hiển thị danh sách người dùng (đang phát triển).</p>
+              <p>Đang cập nhật.</p>
             </div>
           );
       default:
@@ -61,7 +61,7 @@ const DashboardPage = () => {
         }`}
       >
         <div className="flex items-center justify-between md:justify-center mb-4">
-          <h2 className="text-xl font-bold">Admin Panel</h2>
+          <h2 className="text-xl font-bold">Hệ thống quản lý</h2>
           <button
             onClick={() => setIsSidebarOpen(false)}
             className="md:hidden text-gray-600 hover:text-black"
@@ -121,7 +121,7 @@ const DashboardPage = () => {
           >
             <Menu />
           </button>
-          <h1 className="text-lg font-semibold">Dashboard</h1>
+          <h1 className="text-lg font-semibold">Quản trị</h1>
         </div>
 
         {/* Content render */}
