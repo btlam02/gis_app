@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { logoutUser } from 'api/auth';
 import BridgeManagementPage from '../../components/Dashboard/BridgeManagement';
-import { Menu, X, Building2, Users, UserRound, LogOut } from 'lucide-react';
+import { Menu, X, Building2, Users, UserRound, LogOut, ChartArea } from 'lucide-react';
 
 const DashboardPage = () => {
   const [userEmail, setUserEmail] = useState('');
@@ -41,6 +41,25 @@ const DashboardPage = () => {
 
   const renderContent = () => {
     switch (activeTab) {
+      case 'statistics': 
+
+        if (userRole!=='admin'){
+          return (
+            <div className="p-4">
+              <h2 className="text-xl font-bold text-red-600">⛔ Không có quyền truy cập</h2>
+              <p>Bạn cần có quyền quản trị viên để xem nội dung này.</p>
+            </div>
+          );
+        }
+        console.log("Hehe")
+        return (
+          <div className="p-4">
+            <h2 className="text-xl font-bold mb-2">Thống kê</h2>
+            <p>Đang phát triển</p>
+          </div>
+        ); 
+        
+        
       case 'bridges':
         if (userRole !== 'admin') {
           return (
@@ -51,6 +70,7 @@ const DashboardPage = () => {
           );
         }
         return <BridgeManagementPage />;
+      
       case 'users':
         if (userRole !== 'admin') {
           return (
@@ -63,7 +83,7 @@ const DashboardPage = () => {
         return (
           <div className="p-4">
             <h2 className="text-xl font-bold mb-2">Quản lý người dùng</h2>
-            <p>Chức năng này sẽ hiển thị danh sách người dùng (đang phát triển).</p>
+            <p>Đang phát triển</p>
           </div>
         );
       case 'information':
@@ -71,7 +91,7 @@ const DashboardPage = () => {
         return (
           <div className="p-4">
             <h2 className="text-xl font-bold mb-2">Thông tin cá nhân</h2>
-            <p>Đang cập nhật.</p>
+            <p>Đang phát triển</p>
           </div>
         );
     }
@@ -97,6 +117,19 @@ const DashboardPage = () => {
         <p className="text-gray-700 text-center text-sm">📧 {userEmail}</p>
 
         {/* Menu Items */}
+
+        {userRole === 'admin' && (
+          <button
+            onClick={() => setActiveTab('statistics')}
+            className={`flex items-center gap-2 px-4 py-2 rounded hover:bg-gray-100 ${
+              activeTab === 'statistics' ? 'bg-gray-200 font-semibold' : ''
+            }`}
+          >
+            <ChartArea size={18} />
+            Thống kê
+          </button>
+        )}
+
         {userRole === 'admin' && (
           <button
             onClick={() => setActiveTab('bridges')}

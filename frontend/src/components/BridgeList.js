@@ -4,7 +4,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import Loading from "./Loading";
 
 const BridgeModal = ({ bridge, onClose }) => {
+
+  const [isImageLoaded, setIsImageLoaded] = useState(false); // ✅ Gọi hook luôn luôn
   if (!bridge) return null;
+
   const getStatusLabel = (status) => {
     const mapping = {
       unknown: "Chưa biết",
@@ -16,48 +19,60 @@ const BridgeModal = ({ bridge, onClose }) => {
   };
 
   return (
-<div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
-  <motion.div
-    className="bg-white rounded-xl p-6 max-w-xl w-full shadow-lg relative"
-    initial={{ opacity: 0, y: -20 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -20 }}
-  >
-    <button
-      onClick={onClose}
-      className="absolute top-2 right-2 text-gray-600 hover:text-red-500 text-lg"
+    <div
+      className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center"
+      onClick={onClose} // click outside = close
     >
-      ×
-    </button>
+      <motion.div
+        className="bg-white rounded-xl p-6 max-w-xl w-[90%] max-h-[90vh] overflow-y-auto shadow-lg relative"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        onClick={(e) => e.stopPropagation()} // prevent closing when click inside
+      >
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 text-gray-600 hover:text-red-500 text-lg"
+        >
+          ×
+        </button>
+        <h2 className="text-2xl font-bold mb-4">{bridge.name}</h2>
 
-    <h2 className="text-2xl font-bold mb-4">{bridge.name}</h2>
+        {/* Grid 2 cột cho thông tin */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-gray-700">
+          <p><strong>Quận:</strong> {bridge.district || "Không rõ"}</p>
+          <p><strong>Chất liệu:</strong> {bridge.material || "Không rõ"}</p>
+          <p><strong>Chiều dài:</strong> {bridge.length ? `${bridge.length} m` : "Không rõ"}</p>
+          <p><strong>Chiều rộng:</strong> {bridge.width ? `${bridge.width} m` : "Không rõ"}</p>
+          <p><strong>Trạng thái:</strong> {getStatusLabel(bridge.status)}</p>
+          <p><strong>Năm xây dựng:</strong> {bridge.built_year || "Không rõ"}</p>
+        </div>
 
-    {/* Grid 2 cột cho thông tin */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-gray-700">
-      <p><strong>Quận:</strong> {bridge.district || "Không rõ"}</p>
-      <p><strong>Chất liệu:</strong> {bridge.material || "Không rõ"}</p>
-      <p><strong>Chiều dài:</strong> {bridge.length ? `${bridge.length} m` : "Không rõ"}</p>
-      <p><strong>Chiều rộng:</strong> {bridge.width ? `${bridge.width} m` : "Không rõ"}</p>
-      <p><strong>Trạng thái:</strong> {getStatusLabel(bridge.status)}</p>
-      <p><strong>Năm xây dựng:</strong> {bridge.built_year}</p>
+        {/* Mô tả */}
+        <p className="text-gray-700 mt-4 col-span-2">
+          {bridge.description || "Không có mô tả."}
+        </p>
+
+        {/* Ảnh nếu có */}
+        {bridge.image_url && (
+          <div className="mt-4 relative">
+            {!isImageLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500 border-solid"></div>
+              </div>
+            )}
+            <img
+              src={bridge.image_url}
+              alt={bridge.name}
+              onLoad={() => setIsImageLoaded(true)}
+              className={`rounded-lg w-full max-h-[300px] object-cover transition-opacity duration-1000 ${
+                isImageLoaded ? "opacity-100" : "opacity-0"
+              }`}
+            />
+          </div>
+        )}
+      </motion.div>
     </div>
-
-    {/* Mô tả riêng phía dưới */}
-    <p className="text-gray-700 mt-4 col-span-2">
-      {bridge.description || "Không có mô tả."}
-    </p>
-
-    {/* Ảnh nếu có */}
-    {bridge.image_url && (
-      <img
-        src={bridge.image_url}
-        alt={bridge.name}
-        className="mt-4 rounded-lg w-full max-h-[300px] object-cover"
-      />
-    )}
-  </motion.div>
-</div>
-
   );
 };
 

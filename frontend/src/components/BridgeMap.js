@@ -257,6 +257,15 @@ export default function BridgeMap() {
     }
   }, []);
 
+
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setHighlightedBridge(null);
+      setRouteStart(null);
+      setRouteEnd(null);
+    }
+  }, [searchQuery]);
+
   const defaultCenter = [10.75, 106.68];
   const firstBridge = bridges.find((b) => b.center_point);
   const center = firstBridge
@@ -319,7 +328,23 @@ export default function BridgeMap() {
       return;
     }
 
-    // 4. Không tìm thấy gì
+    const coordRegex = /^(-?\d+(\.\d+)?)[,\s]+(-?\d+(\.\d+)?)$/;
+    const coordMatch = searchQuery.match(coordRegex);
+    if (coordMatch) {
+      const lat = parseFloat(coordMatch[1]);
+      const lng = parseFloat(coordMatch[3]);
+      const coords = [lat, lng];
+
+      setHighlightedBridge({ id: "coordinate-search", coords });
+
+      if (routingEnabled && userLocation) {
+        setRouteStart(userLocation);
+        setRouteEnd(coords);
+      }
+      return;
+    }
+
+    
     toast.warning(
       "Không tìm thấy địa điểm hoặc tên cầu trong hệ thống. Có thể cầu chưa được cập nhật."
     );
@@ -330,7 +355,7 @@ export default function BridgeMap() {
 
   return (
     <div className="relative w-full h-full">
-      <div className="absolute bottom-2 xl:bottom-4 left-4 z-[1000] bg-white/90 backdrop-blur-sm px-3 py-2 rounded-xl shadow-md flex gap-2">
+      <div className="absolute bottom-5 xl:bottom-4 left-4 z-[1000] bg-white/90 backdrop-blur-sm px-3 py-2 rounded-xl shadow-md flex gap-2">
         {["Bản đồ", "Vệ tinh", "Tối"].map((label, i) => {
           const value = ["default", "satellite", "dark"][i];
           return (
