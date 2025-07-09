@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { logoutUser } from 'api/auth';
 import BridgeManagementPage from '../../components/Dashboard/BridgeManagement';
 import { Menu, X, Building2, Users, UserRound, LogOut, ChartArea } from 'lucide-react';
+import UserManagementPage from '../../components/Dashboard/UsersManagement';
+import UserProfilePage from 'components/Dashboard/UserProfile';
+import Statistics from '../../components/Dashboard/Statistics';
 
 const DashboardPage = () => {
   const [userEmail, setUserEmail] = useState('');
@@ -52,12 +55,7 @@ const DashboardPage = () => {
           );
         }
         console.log("Hehe")
-        return (
-          <div className="p-4">
-            <h2 className="text-xl font-bold mb-2">Thống kê</h2>
-            <p>Đang phát triển</p>
-          </div>
-        ); 
+        return <Statistics/>; 
         
         
       case 'bridges':
@@ -80,20 +78,10 @@ const DashboardPage = () => {
             </div>
           );
         }
-        return (
-          <div className="p-4">
-            <h2 className="text-xl font-bold mb-2">Quản lý người dùng</h2>
-            <p>Đang phát triển</p>
-          </div>
-        );
+        return <UserManagementPage/>;
       case 'information':
       default:
-        return (
-          <div className="p-4">
-            <h2 className="text-xl font-bold mb-2">Thông tin cá nhân</h2>
-            <p>Đang phát triển</p>
-          </div>
-        );
+        return <UserProfilePage/>;
     }
   };
 

@@ -224,7 +224,6 @@ export default function BridgeMap() {
   const [searchQuery, setSearchQuery] = useState("");
   const [highlightedBridge, setHighlightedBridge] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
-  const [destinationCoords, setDestinationCoords] = useState(null);
   const [routingEnabled, setRoutingEnabled] = useState(false);
   const [routeStart, setRouteStart] = useState(null);
   const [routeEnd, setRouteEnd] = useState(null);

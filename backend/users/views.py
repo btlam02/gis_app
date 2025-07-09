@@ -13,7 +13,6 @@ from .serializers import UserSerializer, UserLoginSerializer
 from .permissions import IsAdminRole, IsOwnerOrAdmin
 
 
-# Đăng ký tài khoản
 class UserRegisterView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
@@ -22,8 +21,6 @@ class UserRegisterView(APIView):
             return Response({'message': 'Đăng ký thành công!'}, status=status.HTTP_201_CREATED)
         return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-
-# Đăng nhập và nhận token
 class UserLoginView(APIView): 
     def post(self, request): 
         serializer = UserLoginSerializer(data=request.data)
@@ -46,7 +43,6 @@ class UserLoginView(APIView):
         return Response({'error_message': 'Thông tin xác thực không hợp lệ'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-# Đăng xuất và blacklist refresh token
 class UserLogoutView(APIView): 
     permission_classes = [permissions.IsAuthenticated]
 
@@ -60,7 +56,7 @@ class UserLogoutView(APIView):
             return Response({'error_message': 'Token không hợp lệ'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-# Admin: Xem danh sách tất cả người dùng
+# Admin: Xem và thêm danh sách tất cả người dùng
 class UserListView(APIView):
     permission_classes = [permissions.IsAuthenticated, IsAdminRole]
 
@@ -69,11 +65,18 @@ class UserListView(APIView):
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
 
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Tạo tài khoản thành công!'}, status=status.HTTP_201_CREATED)
+        return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 # Xem/Sửa/Xoá tài khoản (chính chủ hoặc admin)
 class UserDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
-
     def get_object(self, pk):
         return get_object_or_404(User, pk=pk)
 
@@ -100,3 +103,11 @@ class UserDetailView(APIView):
             user.delete()
             return Response({'message': 'Đã xoá người dùng'}, status=status.HTTP_204_NO_CONTENT)
         return Response({'detail': 'Chỉ admin có quyền xoá'}, status=status.HTTP_403_FORBIDDEN)
+
+
+
+class CurrentUserView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
